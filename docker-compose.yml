@@ -1,0 +1,14 @@
+services:
+  coming-soon:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./config.json:/usr/share/nginx/html/config.json:ro
+      - ./images:/usr/share/nginx/html/images:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 

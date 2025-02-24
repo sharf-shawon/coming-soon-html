@@ -1,0 +1,221 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- These will be set dynamically via JavaScript -->
+    <title>Coming Soon</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="">
+    <meta property="twitter:title" content="">
+    <meta property="twitter:description" content="">
+    <meta property="twitter:image" content="">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    
+    <!-- Existing CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- The body class will be set dynamically via JavaScript -->
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Sticky Header with Logo -->
+        <header class="sticky top-0 backdrop-blur-sm py-4">
+            <div class="container mx-auto px-4">
+                <div id="logoContainer" class="w-12 h-12 bg-white rounded-lg p-2 hidden">
+                    <img id="logoImage" class="w-full h-full object-contain" src="" alt="Logo">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-16 text-center">
+            <h1 id="companyName" class="text-4xl md:text-6xl font-bold mb-4"></h1>
+            <h2 class="text-2xl md:text-4xl mb-8">Coming Soon</h2>
+
+            <!-- Countdown Timer -->
+            <div class="max-w-2xl mx-auto rounded-lg p-6 backdrop-blur-sm">
+                <div id="countdown" class="grid grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold days">0</div>
+                        <div class="text-sm opacity-75">Days</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold hours">0</div>
+                        <div class="text-sm opacity-75">Hours</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold minutes">0</div>
+                        <div class="text-sm opacity-75">Minutes</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold seconds">0</div>
+                        <div class="text-sm opacity-75">Seconds</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Icons -->
+            <div id="socialIcons" class="mt-8 flex justify-center gap-4">
+                <!-- Social icons will be inserted here -->
+            </div>
+        </main>
+
+        <!-- Sticky Footer -->
+        <footer class="sticky bottom-0 backdrop-blur-sm py-4 mt-8">
+            <div class="container mx-auto px-4 text-center">
+                <p id="footerText"></p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Load configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                
+                // Get current URL and domain
+                const currentUrl = window.location.href;
+                const domain = window.location.hostname;
+                
+                // Set company name or fallback to domain name
+                const companyName = config.companyName || domain;
+                const description = `${companyName} - Coming Soon! Our website is under construction. Stay tuned for the launch.`;
+                
+                // Update all meta tags
+                document.title = `${companyName} Coming Soon`;
+                document.querySelector('meta[name="description"]').setAttribute('content', description);
+                document.querySelector('meta[name="author"]').setAttribute('content', companyName);
+                
+                // Update Open Graph meta tags
+                document.querySelector('meta[property="og:url"]').setAttribute('content', currentUrl);
+                document.querySelector('meta[property="og:title"]').setAttribute('content', `${companyName} Coming Soon`);
+                document.querySelector('meta[property="og:description"]').setAttribute('content', description);
+                if (config.logoUrl) {
+                    document.querySelector('meta[property="og:image"]').setAttribute('content', config.logoUrl);
+                }
+                
+                // Update Twitter meta tags
+                document.querySelector('meta[property="twitter:url"]').setAttribute('content', currentUrl);
+                document.querySelector('meta[property="twitter:title"]').setAttribute('content', `${companyName} Coming Soon`);
+                document.querySelector('meta[property="twitter:description"]').setAttribute('content', description);
+
+                if (config.meta.favicon) {
+                    document.querySelector('link[rel="icon"]').setAttribute('href', config.meta.favicon);
+                }
+
+                if (config.logoUrl) {
+                    document.querySelector('meta[property="twitter:image"]').setAttribute('content', config.logoUrl);
+                }
+
+                // Apply color scheme
+                const appElement = document.getElementById('app');
+                appElement.className = `min-h-screen flex flex-col bg-gradient-to-br from-${config.colors.gradientFrom} to-${config.colors.gradientTo} text-${config.colors.textPrimary}`;
+                
+                // Apply overlay background colors
+                document.querySelectorAll('header, footer, .backdrop-blur-sm').forEach(el => {
+                    el.classList.add(`bg-${config.colors.overlayBg}`);
+                });
+                
+                // Apply secondary text color
+                document.querySelectorAll('h2, footer p').forEach(el => {
+                    el.classList.add(`text-${config.colors.textSecondary}`);
+                });
+
+                // Set logo
+                const logoContainer = document.getElementById('logoContainer');
+                if (config.logoUrl) {
+                    document.getElementById('logoImage').src = config.logoUrl;
+                    logoContainer.classList.remove('hidden');
+                }
+                // Set company name
+                document.getElementById('companyName').innerHTML = companyName;
+
+                // Update footer text
+                document.getElementById('footerText').innerHTML = 
+                    `All rights reserved. © ${new Date().getFullYear()} ${companyName}. | Powered By <a href="https://shawon.me" target="_blank">Shawon</a>`;
+
+                // Setup countdown timer
+                const targetDate = new Date(config.targetDate).getTime();
+                setupCountdown(targetDate);
+
+                // Setup social icons
+                if (config.social && config.social.length > 0) {
+                    const socialContainer = document.getElementById('socialIcons');
+                    const iconMap = {
+                        'twitter': 'fab fa-twitter',
+                        'linkedin': 'fab fa-linkedin',
+                        'facebook': 'fab fa-facebook',
+                        'github': 'fab fa-github',
+                        'instagram': 'fab fa-instagram',
+                        'youtube': 'fab fa-youtube'
+                    };
+                    
+                    config.social.forEach(social => {
+                        const link = document.createElement('a');
+                        link.href = social.url;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.className = `text-${config.colors.textPrimary} hover:text-${config.colors.textSecondary} transition-colors`;
+                        
+                        const icon = document.createElement('i');
+                        icon.className = `${iconMap[social.platform]} text-2xl`;
+                        
+                        link.appendChild(icon);
+                        socialContainer.appendChild(link);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+            }
+        }
+
+        function setupCountdown(targetDate) {
+            function updateTimer() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.querySelector('.days').textContent = days.toString().padStart(2, '0');
+                document.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
+                document.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
+                document.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('countdown').innerHTML = '<div class="text-2xl text-white">Website is live!</div>';
+                }
+            }
+
+            const timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Initial call
+        }
+
+        // Initialize the page
+        loadConfig();
+    </script>
+</body>
+</html>
