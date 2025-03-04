@@ -6,6 +6,7 @@ services:
     volumes:
       - ./config.json:/usr/share/nginx/html/config.json:ro
       - ./images:/usr/share/nginx/html/images:ro
+      - ./include/analytics.html:/usr/share/nginx/html/include/analytics.html:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost"]
